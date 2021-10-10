@@ -22,7 +22,7 @@ function createClient<IAPI extends object>(
 
 ```ts
 function createServer<IAPI extends object>(
-  API: IAPI
+  api: IAPI
 , port: MessagePort | Worker
 ): () => void
 ```

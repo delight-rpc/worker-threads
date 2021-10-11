@@ -11,7 +11,7 @@ interface API {
 describe('createClient, createServer', () => {
   let worker: Worker
   beforeEach(() => {
-    worker = new Worker(path.resolve(__dirname, './worker.js'))
+    worker = new Worker(path.resolve(__dirname, './server.js'))
   })
   afterEach(async () => {
     await worker.terminate()

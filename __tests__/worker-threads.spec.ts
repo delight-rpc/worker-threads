@@ -1,5 +1,4 @@
 import { createClient } from '@src/client'
-import '@blackglory/jest-matchers'
 import { Worker } from 'worker_threads'
 import '@blackglory/jest-matchers'
 import * as path from 'path'

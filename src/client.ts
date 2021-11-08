@@ -9,13 +9,7 @@ export function createClient<IAPI extends object>(
 ): DelightRPC.RequestProxy<IAPI> {
   const pendings: { [id: string]: Deferred<JsonRpcResponse<any>> } = {}
 
-  port.on('message', res => {
-    if (isJsonRpcSuccess(res)) {
-      pendings[res.id].resolve(res)
-    } else if (isJsonRpcError(res)) {
-      pendings[res.id].reject(res)
-    }
-  })
+  port.on('message', handler)
 
   const client = DelightRPC.createClient<IAPI>(
     async function request(jsonRpc) {
@@ -31,4 +25,12 @@ export function createClient<IAPI extends object>(
   )
 
   return client
+
+  function handler(res: any): void {
+    if (isJsonRpcSuccess(res)) {
+      pendings[res.id].resolve(res)
+    } else if (isJsonRpcError(res)) {
+      pendings[res.id].reject(res)
+    }
+  }
 }

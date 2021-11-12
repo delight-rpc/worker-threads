@@ -11,6 +11,9 @@ export function createClient<IAPI extends object>(
   const pendings: { [id: string]: Deferred<JsonRpcResponse<any>> } = {}
 
   port.on('message', handler)
+  if (port instanceof MessagePort) {
+    port.start()
+  }
 
   const client = DelightRPC.createClient<IAPI>(
     async function request(jsonRpc) {
@@ -29,6 +32,9 @@ export function createClient<IAPI extends object>(
 
   function close() {
     port.off('message', handler)
+    if (port instanceof MessagePort) {
+      port.close()
+    }
 
     for (const [key, deferred] of Object.entries(pendings)) {
       deferred.reject(new ClientClosed())

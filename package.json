@@ -24,7 +24,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "run-s lint build test",
+      "pre-commit": "run-s prepare lint build test",
       "commit-msg": "commitlint --env HUSKY_GIT_PARAMS"
     }
   },

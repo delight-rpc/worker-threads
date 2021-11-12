@@ -14,10 +14,11 @@ describe('Main as Client, Worker as Server', () => {
   })
 
   test('echo', async () => {
-    const client = createClient<IAPI>(worker)
+    const [client, close] = createClient<IAPI>(worker)
 
     const result = client.echo('hello')
     const proResult = await result
+    close()
 
     expect(result).toBePromise()
     expect(proResult).toStrictEqual('hello')

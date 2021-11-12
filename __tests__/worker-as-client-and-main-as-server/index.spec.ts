@@ -15,9 +15,12 @@ describe('Worker as Client, Main as Server', () => {
     const worker: Worker = new Worker(path.resolve(__dirname, './worker.js'))
     const cancelServer = createServer(api, worker)
 
+    const [client, close] = createClient<{
+      eval: (code: string) => any
+    }>(worker)
     try {
-      const client = createClient<{ eval: (code: string) => any }>(worker)
       const result = await client.eval('client.echo("hello")')
+      close()
       expect(result).toEqual('hello')
     } finally {
       cancelServer()

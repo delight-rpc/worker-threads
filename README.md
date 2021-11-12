@@ -31,7 +31,7 @@ import { Worker } from 'worker_threads'
 import { createClient } from '@delight-rpc/client'
 
 const worker = new Worker('./worker.js')
-const client = createClient<IAPI>(worker)
+const [client] = createClient<IAPI>(worker)
 
 await client.echo('hello world')
 ```
@@ -60,7 +60,7 @@ createServer(api, worker)
 import { parentPort } from 'worker_threads'
 import { createClient } from '@delight-rpc/client'
 
-const client = createClient<IAPI>(parentPort!)
+const [client] = createClient<IAPI>(parentPort!)
 await client.echo('hello world')
 ```
 
@@ -69,7 +69,7 @@ await client.echo('hello world')
 ```ts
 function createClient<IAPI extends object>(
   port: MessagePort | Worker
-): DelightRPC.RequestProxy<IAPI>
+): [client: DelightRPC.RequestProxy<IAPI>, close: () => void]
 ```
 
 ### createServer

@@ -1,13 +1,10 @@
 import { createClient } from '@src/client'
 import { Worker } from 'worker_threads'
 import '@blackglory/jest-matchers'
+import { IAPI } from './api'
 import * as path from 'path'
 
-interface API {
-  echo(message: string): string
-}
-
-describe('createClient, createServer', () => {
+describe('Main as Client, Worker as Server', () => {
   let worker: Worker
   beforeEach(() => {
     worker = new Worker(path.resolve(__dirname, './worker.js'))
@@ -17,7 +14,7 @@ describe('createClient, createServer', () => {
   })
 
   test('echo', async () => {
-    const client = createClient<API>(worker)
+    const client = createClient<IAPI>(worker)
 
     const result = client.echo('hello')
     const proResult = await result

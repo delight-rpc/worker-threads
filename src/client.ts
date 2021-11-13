@@ -51,4 +51,4 @@ export function createClient<IAPI extends object>(
   }
 }
 
-class ClientClosed extends CustomError {}
+export class ClientClosed extends CustomError {}

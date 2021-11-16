@@ -37,8 +37,8 @@
     "@commitlint/config-conventional": "^14.1.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
-    "@typescript-eslint/eslint-plugin": "^5.3.1",
-    "@typescript-eslint/parser": "^5.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
     "cross-env": "^7.0.3",
     "eslint": "8.2.0",
     "husky": "4",
@@ -55,7 +55,7 @@
   "dependencies": {
     "@blackglory/errors": "^1.1.2",
     "@blackglory/types": "^0.5.2",
-    "delight-rpc": "^0.1.21",
+    "delight-rpc": "^0.2.0",
     "extra-promise": "^0.19.1",
     "justypes": "^0.1.6"
   }

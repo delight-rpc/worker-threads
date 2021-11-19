@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/delight-rpc/worker-threads/compare/v0.2.2...v1.0.0) (2021-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* add delight-rpc^1.1.1 into peerDependencies
+
+* upgrade depenencies ([1e1df53](https://github.com/delight-rpc/worker-threads/commit/1e1df53a28327c867b9fd5c1036f3eba0b521db4))
+
 ### [0.2.2](https://github.com/delight-rpc/worker-threads/compare/v0.2.1...v0.2.2) (2021-11-16)
 
 ### [0.2.1](https://github.com/delight-rpc/worker-threads/compare/v0.2.0...v0.2.1) (2021-11-13)

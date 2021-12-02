@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/delight-rpc/worker-threads/compare/v1.0.0...v1.1.0) (2021-12-02)
+
+
+### Features
+
+* stop starting and closing MessagePort ([c35f2d6](https://github.com/delight-rpc/worker-threads/commit/c35f2d667cc3ae3c1e6610cde35b8dc3273c0d3b))
+
 ## [1.0.0](https://github.com/delight-rpc/worker-threads/compare/v0.2.2...v1.0.0) (2021-11-19)
 
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/delight-rpc/worker-threads/compare/v1.1.0...v1.1.1) (2021-12-04)
+
+
+### Bug Fixes
+
+* error ([0cf4f88](https://github.com/delight-rpc/worker-threads/commit/0cf4f88ac1036bb532dfb783e89f70cb571097ce))
+
 ## [1.1.0](https://github.com/delight-rpc/worker-threads/compare/v1.0.0...v1.1.0) (2021-12-02)
 
 

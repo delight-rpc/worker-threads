@@ -3,6 +3,7 @@ import { Worker } from 'worker_threads'
 import '@blackglory/jest-matchers'
 import { IAPI } from './api'
 import * as path from 'path'
+import { getErrorPromise } from 'return-style'
 
 describe('Main as Client, Worker as Server', () => {
   let worker: Worker
@@ -21,6 +22,16 @@ describe('Main as Client, Worker as Server', () => {
     close()
 
     expect(result).toBePromise()
-    expect(proResult).toStrictEqual('hello')
+    expect(proResult).toBe('hello')
+  })
+
+  test('error', async () => {
+    const [client, close] = createClient<IAPI>(worker)
+
+    const err = await getErrorPromise(client.error('hello'))
+    close()
+
+    expect(err).toBeInstanceOf(Error)
+    expect(err!.message).toMatch('Error: hello')
   })
 })

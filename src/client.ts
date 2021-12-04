@@ -38,7 +38,7 @@ export function createClient<IAPI extends object>(
     if (DelightRPC.isResult(res)) {
       pendings[res.id].resolve(res)
     } else if (DelightRPC.isError(res)) {
-      pendings[res.id].reject(res)
+      pendings[res.id].resolve(res)
     }
   }
 }

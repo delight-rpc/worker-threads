@@ -15,9 +15,11 @@ const api: IAPI = {
   }
 }
 
+const filename = path.resolve(__dirname, './worker.js')
+
 describe('Worker as Client, Main as Server', () => {
-  it('echo', async () => {
-    const worker: Worker = new Worker(path.resolve(__dirname, './worker.js'))
+  test('echo', async () => {
+    const worker: Worker = new Worker(filename)
     const cancelServer = createServer(api, worker)
 
     const [client, close] = createClient<{
@@ -33,8 +35,8 @@ describe('Worker as Client, Main as Server', () => {
     }
   })
 
-  it('error', async () => {
-    const worker: Worker = new Worker(path.resolve(__dirname, './worker.js'))
+  test('error', async () => {
+    const worker: Worker = new Worker(filename)
     const cancelServer = createServer(api, worker)
 
     const [client, close] = createClient<{

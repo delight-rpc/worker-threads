@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/delight-rpc/worker-threads/compare/v1.1.1...v2.0.0) (2021-12-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* - The minimum version is Node.js v16
+
+* upgrade dependencies ([0c32a27](https://github.com/delight-rpc/worker-threads/commit/0c32a27d8c3caa385cc5b1e571a75ecfcdfbe95b))
+
 ### [1.1.1](https://github.com/delight-rpc/worker-threads/compare/v1.1.0...v1.1.1) (2021-12-04)
 
 

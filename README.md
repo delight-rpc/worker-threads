@@ -69,6 +69,7 @@ await client.echo('hello world')
 ```ts
 function createClient<IAPI extends object>(
   port: MessagePort | Worker
+, parameterValidators?: DelightRPC.ParameterValidators<IAPI>
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
 
@@ -77,5 +78,6 @@ function createClient<IAPI extends object>(
 function createServer<IAPI extends object>(
   api: IAPI
 , port: MessagePort | Worker
+, parameterValidators?: DelightRPC.ParameterValidators<IAPI>
 ): () => void
 ```

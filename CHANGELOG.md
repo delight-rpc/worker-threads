@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/delight-rpc/worker-threads/compare/v2.0.1...v2.1.0) (2021-12-29)
+
+
+### Features
+
+* add parameter validators support ([43deecf](https://github.com/delight-rpc/worker-threads/commit/43deecff6960e65a910b32e8e4b108e2ee5f2e4d))
+
 ### [2.0.1](https://github.com/delight-rpc/worker-threads/compare/v2.0.0...v2.0.1) (2021-12-17)
 
 ## [2.0.0](https://github.com/delight-rpc/worker-threads/compare/v1.1.1...v2.0.0) (2021-12-16)

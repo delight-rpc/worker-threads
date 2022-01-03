@@ -28,7 +28,7 @@ createServer(api, parentPort!)
 
 // main.ts
 import { Worker } from 'worker_threads'
-import { createClient } from '@delight-rpc/client'
+import { createClient } from '@delight-rpc/worker-threads'
 
 const worker = new Worker('./worker.js')
 const [client] = createClient<IAPI>(worker)
@@ -58,7 +58,7 @@ createServer(api, worker)
 
 // worker.ts
 import { parentPort } from 'worker_threads'
-import { createClient } from '@delight-rpc/client'
+import { createClient } from '@delight-rpc/worker-threads'
 
 const [client] = createClient<IAPI>(parentPort!)
 await client.echo('hello world')

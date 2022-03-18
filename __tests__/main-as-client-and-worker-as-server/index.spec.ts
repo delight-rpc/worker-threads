@@ -1,9 +1,9 @@
 import { createClient } from '@src/client'
 import { Worker } from 'worker_threads'
-import '@blackglory/jest-matchers'
 import { IAPI } from './api'
 import * as path from 'path'
 import { getErrorPromise } from 'return-style'
+import '@blackglory/jest-matchers'
 
 describe('Main as Client, Worker as Server', () => {
   let worker: Worker

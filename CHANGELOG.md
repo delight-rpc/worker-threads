@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.1](https://github.com/delight-rpc/worker-threads/compare/v3.1.0...v3.1.1) (2022-04-04)
+
+
+### Bug Fixes
+
+* createServer for batch requests ([28719fc](https://github.com/delight-rpc/worker-threads/commit/28719fc3277f7e319602e8ef58edb262cd133b47))
+
 ## [3.1.0](https://github.com/delight-rpc/worker-threads/compare/v3.0.0...v3.1.0) (2022-03-18)
 
 

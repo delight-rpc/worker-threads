@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/delight-rpc/worker-threads/compare/v3.1.1...v4.0.0) (2022-05-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* use delight-rpc@4
+
+* upgrade dependencies ([a62e7ee](https://github.com/delight-rpc/worker-threads/commit/a62e7eec5c55562714fa36fb90e3c31bfbd1a9d8))
+
 ### [3.1.1](https://github.com/delight-rpc/worker-threads/compare/v3.1.0...v3.1.1) (2022-04-04)
 
 

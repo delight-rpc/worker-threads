@@ -1,11 +1,15 @@
 import * as DelightRPC from 'delight-rpc'
 import { MessagePort, Worker } from 'worker_threads'
+import { isntNull } from '@blackglory/prelude'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
 , port: MessagePort | Worker
-, parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-, version?: `${number}.${number}.${number}`
+, { parameterValidators, version, channel }: {
+    parameterValidators?: DelightRPC.ParameterValidators<IAPI>
+    version?: `${number}.${number}.${number}`
+    channel?: string
+  } = {}
 ): () => void {
   port.on('message', handler)
   return () => port.off('message', handler)
@@ -15,11 +19,16 @@ export function createServer<IAPI extends object>(
       const result = await DelightRPC.createResponse(
         api
       , req
-      , parameterValidators
-      , version
+      , {
+          parameterValidators
+        , version
+        , channel
+        }
       )
 
-      port.postMessage(result)
+      if (isntNull(result)) {
+        port.postMessage(result)
+      }
     }
   }
 }

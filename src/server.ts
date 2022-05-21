@@ -5,10 +5,11 @@ import { isntNull } from '@blackglory/prelude'
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
 , port: MessagePort | Worker
-, { parameterValidators, version, channel }: {
+, { parameterValidators, version, channel, ownPropsOnly }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     version?: `${number}.${number}.${number}`
     channel?: string
+    ownPropsOnly?: boolean
   } = {}
 ): () => void {
   port.on('message', handler)
@@ -23,6 +24,7 @@ export function createServer<IAPI extends object>(
           parameterValidators
         , version
         , channel
+        , ownPropsOnly
         }
       )
 

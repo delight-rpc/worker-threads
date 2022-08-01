@@ -107,7 +107,8 @@ function createBatchClient(
     = (port, request) => port.postMessage(request)
 
     receiveMessage?: (message: unknown) =>
-    | IResponse<unknown>
+    | IError
+    | IBatchResponse<unknown>
     | undefined
     = message => {
       if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {

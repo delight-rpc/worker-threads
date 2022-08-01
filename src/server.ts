@@ -1,7 +1,7 @@
 import * as DelightRPC from 'delight-rpc'
 import { MessagePort, Worker } from 'worker_threads'
 import { isntNull } from '@blackglory/prelude'
-import { IResponse, IBatchResponse } from '@delight-rpc/protocol'
+import { IRequest, IBatchRequest, IResponse, IBatchResponse } from '@delight-rpc/protocol'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
@@ -12,6 +12,11 @@ export function createServer<IAPI extends object>(
   , channel
   , ownPropsOnly
   , postMessage = (port, response) => port.postMessage(response)
+  , receiveMessage = message => {
+      if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
+        return message
+      }
+    }
   }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     version?: `${number}.${number}.${number}`
@@ -21,16 +26,21 @@ export function createServer<IAPI extends object>(
       port: MessagePort | Worker
     , response: IResponse<unknown> | IBatchResponse<unknown>
     ) => void
+    receiveMessage?: (data: unknown) =>
+    | IRequest<unknown>
+    | IBatchRequest<unknown>
+    | undefined
   } = {}
 ): () => void {
   port.on('message', handler)
   return () => port.off('message', handler)
 
-  async function handler(req: any): Promise<void> {
-    if (DelightRPC.isRequest(req) || DelightRPC.isBatchRequest(req)) {
+  async function handler(message: unknown): Promise<void> {
+    const request = receiveMessage(message)
+    if (request) {
       const result = await DelightRPC.createResponse(
         api
-      , req
+      , request
       , {
           parameterValidators
         , version

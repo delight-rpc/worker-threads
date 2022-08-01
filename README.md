@@ -76,7 +76,16 @@ function createClient<IAPI extends object>(
     postMessage?: (
       port: MessagePort | Worker
     , request: IRequest<unknown>
-    ) => void = (port, request) => port.postMessage(request)
+    ) => void
+    = (port, request) => port.postMessage(request)
+    receiveMessage?: (message: unknown) =>
+    | IResponse<unknown>
+    | undefined
+    = message => {
+      if (DelightRPC.isResult(message) || DelightRPC.isError(message)) {
+        return message
+      }
+    }
   }
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
@@ -91,7 +100,16 @@ function createBatchClient(
     postMessage?: (
       port: MessagePort | Worker
     , request: IBatchRequest<unknown>
-    ) => void = (port, request) => port.postMessage(request)
+    ) => void
+    = (port, request) => port.postMessage(request)
+    receiveMessage?: (message: unknown) =>
+    | IResponse<unknown>
+    | undefined
+    = message => {
+      if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {
+        return message
+      }
+    }
   }
 ): [client: DelightRPC.BatchClient, close: () => void]
 ```
@@ -109,7 +127,17 @@ function createServer<IAPI extends object>(
     postMessage?: (
       port: MessagePort | Worker
     , response: IResponse<unknown> | IBatchResponse<unknown>
-    ) => void = (port, response) => port.postMessage(response)
+    ) => void
+    = (port, response) => port.postMessage(response)
+    receiveMessage?: (message: unknown) =>
+    | IRequest<unknown>
+    | IBatchRequest<unknown>
+    | undefined
+    = message => {
+      if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
+        return message
+      }
+    }
   }
 ): () => void
 ```

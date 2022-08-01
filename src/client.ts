@@ -11,11 +11,19 @@ export function createClient<IAPI extends object>(
   , expectedVersion
   , channel
   , postMessage = (port, request) => port.postMessage(request)
+  , receiveMessage = message => {
+      if (DelightRPC.isResult(message) || DelightRPC.isError(message)) {
+        return message
+      }
+    }
   }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
     postMessage?: (port: MessagePort | Worker, request: IRequest<unknown>) => void
+    receiveMessage?: (message: unknown) =>
+    | IResponse<unknown>
+    | undefined
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
   const pendings: { [id: string]: Deferred<IResponse<unknown>> } = {}
@@ -51,9 +59,10 @@ export function createClient<IAPI extends object>(
     }
   }
 
-  function handler(res: any): void {
-    if (DelightRPC.isResult(res) || DelightRPC.isError(res)) {
-      pendings[res.id].resolve(res)
+  function handler(message: unknown): void {
+    const response = receiveMessage(message)
+    if (response) {
+      pendings[response.id].resolve(response)
     }
   }
 }
@@ -64,6 +73,11 @@ export function createBatchClient(
     expectedVersion
   , channel
   , postMessage = (port, request) => port.postMessage(request)
+  , receiveMessage = message => {
+      if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {
+        return message
+      }
+    }
   }: {
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
@@ -71,6 +85,10 @@ export function createBatchClient(
       port: MessagePort | Worker
     , request: IBatchRequest<unknown>
     ) => void
+    receiveMessage?: (message: unknown) =>
+    | IError
+    | IBatchResponse<unknown>
+    | undefined
   } = {}
 ): [client: DelightRPC.BatchClient, close: () => void] {
   const pendings: {
@@ -113,9 +131,10 @@ export function createBatchClient(
     }
   }
 
-  function handler(res: any): void {
-    if (DelightRPC.isError(res) || DelightRPC.isBatchResponse(res)) {
-      pendings[res.id].resolve(res)
+  function handler(message: unknown): void {
+    const response = receiveMessage(message)
+    if (response) {
+      pendings[response.id].resolve(response)
     }
   }
 }

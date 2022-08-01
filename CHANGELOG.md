@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/delight-rpc/worker-threads/compare/v4.1.0...v4.2.0) (2022-08-01)
+
+
+### Features
+
+* add `receiveMessage` option ([054bcf0](https://github.com/delight-rpc/worker-threads/commit/054bcf009db942059d71d29790e9beada6bf9755))
+
 ## [4.1.0](https://github.com/delight-rpc/worker-threads/compare/v4.0.3...v4.1.0) (2022-08-01)
 
 

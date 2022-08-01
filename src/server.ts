@@ -11,7 +11,7 @@ export function createServer<IAPI extends object>(
   , version
   , channel
   , ownPropsOnly
-  , postMessage = (port, request) => port.postMessage(request)
+  , postMessage = (port, response) => port.postMessage(response)
   }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     version?: `${number}.${number}.${number}`

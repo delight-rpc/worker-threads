@@ -109,7 +109,7 @@ function createServer<IAPI extends object>(
     postMessage?: (
       port: MessagePort | Worker
     , response: IResponse<unknown> | IBatchResponse<unknown>
-    ) => void = (port, request) => port.postMessage(request)
+    ) => void = (port, response) => port.postMessage(response)
   }
 ): () => void
 ```

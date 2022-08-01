@@ -73,6 +73,10 @@ function createClient<IAPI extends object>(
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
+    postMessage?: (
+      port: MessagePort | Worker
+    , request: IRequest<unknown>
+    ) => void = (port, request) => port.postMessage(request)
   }
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
@@ -84,6 +88,10 @@ function createBatchClient(
 , options?: {
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
+    postMessage?: (
+      port: MessagePort | Worker
+    , request: IBatchRequest<unknown>
+    ) => void = (port, request) => port.postMessage(request)
   }
 ): [client: DelightRPC.BatchClient, close: () => void]
 ```
@@ -98,6 +106,10 @@ function createServer<IAPI extends object>(
     version?: `${number}.${number}.${number}`
     channel?: string | RegExp | AnyChannel
     ownPropsOnly?: boolean
+    postMessage?: (
+      port: MessagePort | Worker
+    , response: IResponse<unknown> | IBatchResponse<unknown>
+    ) => void = (port, request) => port.postMessage(request)
   }
 ): () => void
 ```

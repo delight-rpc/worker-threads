@@ -73,11 +73,13 @@ function createClient<IAPI extends object>(
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
+
     postMessage?: (
       port: MessagePort | Worker
     , request: IRequest<unknown>
     ) => void
     = (port, request) => port.postMessage(request)
+
     receiveMessage?: (message: unknown) =>
     | IResponse<unknown>
     | undefined
@@ -97,11 +99,13 @@ function createBatchClient(
 , options?: {
     expectedVersion?: `${number}.${number}.${number}`
     channel?: string
+
     postMessage?: (
       port: MessagePort | Worker
     , request: IBatchRequest<unknown>
     ) => void
     = (port, request) => port.postMessage(request)
+
     receiveMessage?: (message: unknown) =>
     | IResponse<unknown>
     | undefined
@@ -124,11 +128,13 @@ function createServer<IAPI extends object>(
     version?: `${number}.${number}.${number}`
     channel?: string | RegExp | AnyChannel
     ownPropsOnly?: boolean
+
     postMessage?: (
       port: MessagePort | Worker
     , response: IResponse<unknown> | IBatchResponse<unknown>
     ) => void
     = (port, response) => port.postMessage(response)
+
     receiveMessage?: (message: unknown) =>
     | IRequest<unknown>
     | IBatchRequest<unknown>

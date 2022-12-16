@@ -18,7 +18,7 @@ export function createClient<IAPI extends object>(
     }
   }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
     postMessage?: (port: MessagePort | Worker, request: IRequest<unknown>) => void
     receiveMessage?: (message: unknown) =>
@@ -79,7 +79,7 @@ export function createBatchClient(
       }
     }
   }: {
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
     postMessage?: (
       port: MessagePort | Worker

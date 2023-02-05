@@ -26,7 +26,7 @@ export function createClient<IAPI extends object>(
     | undefined
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
-  const pendings: { [id: string]: Deferred<IResponse<unknown>> } = {}
+  const pendings: Record<string, Deferred<IResponse<unknown>> | undefined> = {}
 
   port.on('message', handler)
 
@@ -54,7 +54,7 @@ export function createClient<IAPI extends object>(
     port.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred.reject(new ClientClosed())
+      deferred!.reject(new ClientClosed())
       delete pendings[key]
     }
   }
@@ -62,7 +62,7 @@ export function createClient<IAPI extends object>(
   function handler(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
-      pendings[response.id].resolve(response)
+      pendings[response.id]?.resolve(response)
     }
   }
 }
@@ -91,12 +91,11 @@ export function createBatchClient(
     | undefined
   } = {}
 ): [client: DelightRPC.BatchClient, close: () => void] {
-  const pendings: {
-    [id: string]: Deferred<
-    | IError
-    | IBatchResponse<unknown>
-    >
-  } = {}
+  const pendings: Record<
+    string
+  , | Deferred<IError | IBatchResponse<unknown>>
+    | undefined
+  > = {}
 
   port.on('message', handler)
 
@@ -126,7 +125,7 @@ export function createBatchClient(
     port.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred.reject(new ClientClosed())
+      deferred!.reject(new ClientClosed())
       delete pendings[key]
     }
   }
@@ -134,7 +133,7 @@ export function createBatchClient(
   function handler(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
-      pendings[response.id].resolve(response)
+      pendings[response.id]?.resolve(response)
     }
   }
 }

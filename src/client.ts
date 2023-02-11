@@ -67,14 +67,14 @@ export function createClient<IAPI extends object>(
   }
 }
 
-export function createBatchClient(
+export function createBatchClient<DataType>(
   port: MessagePort | Worker
 , {
     expectedVersion
   , channel
   , postMessage = (port, request) => port.postMessage(request)
   , receiveMessage = message => {
-      if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {
+      if (DelightRPC.isError(message) || DelightRPC.isBatchResponse<DataType>(message)) {
         return message
       }
     }
@@ -83,27 +83,27 @@ export function createBatchClient(
     channel?: string
     postMessage?: (
       port: MessagePort | Worker
-    , request: IBatchRequest<unknown>
+    , request: IBatchRequest<DataType>
     ) => void
     receiveMessage?: (message: unknown) =>
     | IError
-    | IBatchResponse<unknown>
+    | IBatchResponse<DataType>
     | undefined
   } = {}
-): [client: DelightRPC.BatchClient, close: () => void] {
+): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
   const pendings: Record<
     string
-  , | Deferred<IError | IBatchResponse<unknown>>
+  , | Deferred<IError | IBatchResponse<DataType>>
     | undefined
   > = {}
 
   port.on('message', handler)
 
-  const client = new DelightRPC.BatchClient(
+  const client = new DelightRPC.BatchClient<DataType>(
     async function send(request) {
       const res = new Deferred<
       | IError
-      | IBatchResponse<unknown>
+      | IBatchResponse<DataType>
       >()
       pendings[request.id] = res
       try {

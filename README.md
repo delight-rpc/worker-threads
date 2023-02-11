@@ -94,7 +94,7 @@ function createClient<IAPI extends object>(
 
 ### createBatchClient
 ```ts
-function createBatchClient(
+function createBatchClient<DataType>(
   port: MessagePort | Worker
 , options?: {
     expectedVersion?: string
@@ -102,13 +102,13 @@ function createBatchClient(
 
     postMessage?: (
       port: MessagePort | Worker
-    , request: IBatchRequest<unknown>
+    , request: IBatchRequest<DataType>
     ) => void
     = (port, request) => port.postMessage(request)
 
     receiveMessage?: (message: unknown) =>
     | IError
-    | IBatchResponse<unknown>
+    | IBatchResponse<DataType>
     | undefined
     = message => {
       if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {
@@ -116,7 +116,7 @@ function createBatchClient(
       }
     }
   }
-): [client: DelightRPC.BatchClient, close: () => void]
+): [client: DelightRPC.BatchClient<DataType>, close: () => void]
 ```
 
 ### createServer

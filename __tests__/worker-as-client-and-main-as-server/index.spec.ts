@@ -16,7 +16,7 @@ const api: IAPI = {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const filename = path.resolve(__dirname, './worker.js')
+const filename = path.resolve(__dirname, './worker.ts')
 
 describe('Worker as Client, Main as Server', () => {
   test('echo', async () => {

@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 describe('Main as Client, Worker as Server', () => {
   let worker: Worker
   beforeEach(() => {
-    worker = new Worker(path.resolve(__dirname, './worker.js'))
+    worker = new Worker(path.resolve(__dirname, './worker.ts'))
   })
   afterEach(async () => {
     await worker.terminate()

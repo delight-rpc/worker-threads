@@ -1,9 +1,10 @@
-import { createClient } from '@src/client'
-import { createServer } from '@src/server'
+import { createClient } from '@src/client.js'
+import { createServer } from '@src/server.js'
 import { Worker } from 'worker_threads'
-import { IAPI } from './api'
+import { IAPI } from './contract.js'
 import * as path from 'path'
 import { getErrorPromise } from 'return-style'
+import { fileURLToPath } from 'url'
 
 const api: IAPI = {
   echo(message: string): string {
@@ -14,6 +15,7 @@ const api: IAPI = {
   }
 }
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const filename = path.resolve(__dirname, './worker.js')
 
 describe('Worker as Client, Main as Server', () => {

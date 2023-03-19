@@ -1,6 +1,6 @@
-import { IAPI } from './api'
-import { createServer } from '../../src/server'
-import { createClient } from '../../src/client'
+import { IAPI } from './contract.js'
+import { createServer } from '@src/server.js'
+import { createClient } from '@src/client.js'
 import { parentPort } from 'worker_threads'
 
 const [client] = createClient<IAPI>(parentPort!)

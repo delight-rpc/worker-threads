@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.1](https://github.com/delight-rpc/worker-threads/compare/v6.0.0...v6.0.1) (2023-06-11)
+
+
+### Bug Fixes
+
+* export src ([495842c](https://github.com/delight-rpc/worker-threads/commit/495842ca017c96c9b25315bb74170e3f5b87b152))
+
 ## [6.0.0](https://github.com/delight-rpc/worker-threads/compare/v5.0.2...v6.0.0) (2023-03-19)
 
 

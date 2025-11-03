@@ -26,19 +26,19 @@ export function createClient<IAPI extends object>(
     | undefined
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
-  const pendings: Record<string, Deferred<IResponse<unknown>> | undefined> = {}
+  const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
 
   port.on('message', handler)
 
   const client = DelightRPC.createClient<IAPI>(
     async function send(request) {
       const res = new Deferred<IResponse<unknown>>()
-      pendings[request.id] = res
+      pendings.set(request.id, res)
       try {
         postMessage(port, request)
         return await res
       } finally {
-        delete pendings[request.id]
+        pendings.delete(request.id)
       }
     }
   , {
@@ -54,15 +54,15 @@ export function createClient<IAPI extends object>(
     port.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred!.reject(new ClientClosed())
-      delete pendings[key]
+      deferred.reject(new ClientClosed())
+      pendings.delete(key)
     }
   }
 
   function handler(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
-      pendings[response.id]?.resolve(response)
+      pendings.get(response.id)?.resolve(response)
     }
   }
 }
@@ -91,11 +91,10 @@ export function createBatchClient<DataType>(
     | undefined
   } = {}
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
-  const pendings: Record<
+  const pendings: Map<
     string
-  , | Deferred<IError | IBatchResponse<DataType>>
-    | undefined
-  > = {}
+  , Deferred<IError | IBatchResponse<DataType>>
+  > = new Map()
 
   port.on('message', handler)
 
@@ -105,12 +104,12 @@ export function createBatchClient<DataType>(
       | IError
       | IBatchResponse<DataType>
       >()
-      pendings[request.id] = res
+      pendings.set(request.id, res)
       try {
         postMessage(port, request)
         return await res
       } finally {
-        delete pendings[request.id]
+        pendings.delete(request.id)
       }
     }
   , {
@@ -125,15 +124,15 @@ export function createBatchClient<DataType>(
     port.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred!.reject(new ClientClosed())
-      delete pendings[key]
+      deferred.reject(new ClientClosed())
+      pendings.delete(key)
     }
   }
 
   function handler(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
-      pendings[response.id]?.resolve(response)
+      pendings.get(response.id)?.resolve(response)
     }
   }
 }

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.3](https://github.com/delight-rpc/worker-threads/compare/v6.0.2...v6.0.3) (2026-02-12)
+
+
+### Bug Fixes
+
+* **client:** replace `Object.entries()` with `Map#entries()` ([174be77](https://github.com/delight-rpc/worker-threads/commit/174be777e09176e3d86b1552e1ca3d5d79cded62))
+
 ### [6.0.2](https://github.com/delight-rpc/worker-threads/compare/v6.0.1...v6.0.2) (2025-11-03)
 
 ### [6.0.1](https://github.com/delight-rpc/worker-threads/compare/v6.0.0...v6.0.1) (2023-06-11)

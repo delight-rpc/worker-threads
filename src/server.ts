@@ -2,6 +2,7 @@ import * as DelightRPC from 'delight-rpc'
 import { MessagePort, Worker } from 'worker_threads'
 import { isntNull } from '@blackglory/prelude'
 import { IRequest, IBatchRequest, IResponse, IBatchResponse, IAbort } from '@delight-rpc/protocol'
+import { HashMap } from '@blackglory/structures'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
@@ -37,15 +38,21 @@ export function createServer<IAPI extends object>(
     | undefined
   } = {}
 ): () => void {
-  const idToController: Map<string, AbortController> = new Map()
+  const channelIdToController: HashMap<
+    {
+      channel?: string
+    , id: string
+    }
+  , AbortController
+  > = new HashMap(({ channel, id }) => JSON.stringify([channel, id]))
 
   port.on('message', handler)
   port.on('close', () => {
-    for (const controller of idToController.values()) {
+    for (const controller of channelIdToController.values()) {
       controller.abort()
     }
 
-    idToController.clear()
+    channelIdToController.clear()
   })
   return () => port.off('message', handler)
 
@@ -54,12 +61,12 @@ export function createServer<IAPI extends object>(
     if (message) {
       if (DelightRPC.isAbort(message)) {
         if (DelightRPC.matchChannel(message, channel)) {
-          idToController.get(message.id)?.abort()
-          idToController.delete(message.id)
+          channelIdToController.get(message)?.abort()
+          channelIdToController.delete(message)
         }
       } else {
         const controller = new AbortController()
-        idToController.set(message.id, controller)
+        channelIdToController.set(message, controller)
 
         try {
           const result = await DelightRPC.createResponse(
@@ -78,7 +85,7 @@ export function createServer<IAPI extends object>(
             postMessage(port, result)
           }
         } finally {
-          idToController.delete(message.id)
+          channelIdToController.delete(message)
         }
       }
     }

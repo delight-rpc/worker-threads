@@ -116,10 +116,7 @@ export function createBatchClient<DataType>(
     | undefined
   } = {}
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
-  const pendings: Map<
-    string
-  , Deferred<IError | IBatchResponse<DataType>>
-  > = new Map()
+  const pendings: Map<string, Deferred<IError | IBatchResponse<DataType>>> = new Map()
 
   port.on('message', handler)
 

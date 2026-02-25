@@ -1,3 +1,4 @@
+import { describe, test, expect, afterEach, beforeEach } from 'vitest'
 import { ImplementationOf } from 'delight-rpc'
 import { createClient } from '@src/client.js'
 import { createServer } from '@src/server.js'
@@ -9,6 +10,7 @@ import { fileURLToPath } from 'url'
 import { assert } from '@blackglory/errors'
 import { delay } from 'extra-promise'
 import { AbortError } from 'extra-abort'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
 const api: ImplementationOf<IAPI> = {
   echo(message: string): string {
@@ -29,11 +31,19 @@ const api: ImplementationOf<IAPI> = {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const filename = path.resolve(__dirname, './worker.ts')
+const filename = path.resolve(__dirname, './worker.js')
 
 describe('Worker as Client, Main as Server', () => {
+  let worker: Worker
+  beforeEach(async () => {
+    worker = new Worker(filename)
+    await waitForEventEmitter(worker, 'message')
+  })
+  afterEach(async () => {
+    await worker.terminate()
+  })
+
   test('result', async () => {
-    const worker: Worker = new Worker(filename)
     const cancelServer = createServer(api, worker)
 
     const [client, close] = createClient<{
@@ -48,12 +58,10 @@ describe('Worker as Client, Main as Server', () => {
     } finally {
       close()
       cancelServer()
-      worker.terminate()
     }
   })
 
   test('error', async () => {
-    const worker: Worker = new Worker(filename)
     const cancelServer = createServer(api, worker)
 
     const [client, close] = createClient<{
@@ -69,12 +77,10 @@ describe('Worker as Client, Main as Server', () => {
     } finally {
       close()
       cancelServer()
-      worker.terminate()
     }
   })
 
   test('abort', async () => {
-    const worker: Worker = new Worker(filename)
     const cancelServer = createServer(api, worker)
 
     const [client, close] = createClient<{
@@ -92,7 +98,6 @@ describe('Worker as Client, Main as Server', () => {
     } finally {
       close()
       cancelServer()
-      worker.terminate()
     }
   })
 })

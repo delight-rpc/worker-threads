@@ -1,3 +1,4 @@
+import { describe, beforeEach, afterEach, test, expect } from 'vitest'
 import { createBatchClient, createClient } from '@src/client.js'
 import { Worker } from 'worker_threads'
 import { IAPI } from './contract.js'
@@ -6,13 +7,15 @@ import { getErrorPromise } from 'return-style'
 import { fileURLToPath } from 'url'
 import { createBatchProxy } from 'delight-rpc'
 import { AbortError } from 'extra-abort'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('Main as Client, Worker as Server', () => {
   let worker: Worker
-  beforeEach(() => {
-    worker = new Worker(path.resolve(__dirname, './worker.ts'))
+  beforeEach(async () => {
+    worker = new Worker(path.resolve(__dirname, './worker.js'))
+    await waitForEventEmitter(worker, 'message')
   })
   afterEach(async () => {
     await worker.terminate()

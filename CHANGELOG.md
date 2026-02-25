@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/delight-rpc/worker-threads/compare/v7.0.0...v8.0.0) (2026-02-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **server:** Node.js v16 => Node.js v22
+
+### Bug Fixes
+
+* **server:** abort request by channel fields ([e530863](https://github.com/delight-rpc/worker-threads/commit/e53086339ceb3eb845cd6a66669f1c85a5cf6cb1))
+
 ## [7.0.0](https://github.com/delight-rpc/worker-threads/compare/v6.0.3...v7.0.0) (2026-02-25)
 
 

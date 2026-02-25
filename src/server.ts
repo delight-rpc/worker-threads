@@ -1,7 +1,7 @@
 import * as DelightRPC from 'delight-rpc'
 import { MessagePort, Worker } from 'worker_threads'
 import { isntNull } from '@blackglory/prelude'
-import { IRequest, IBatchRequest, IResponse, IBatchResponse } from '@delight-rpc/protocol'
+import { IRequest, IBatchRequest, IResponse, IBatchResponse, IAbort } from '@delight-rpc/protocol'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
@@ -13,7 +13,11 @@ export function createServer<IAPI extends object>(
   , ownPropsOnly
   , postMessage = (port, response) => port.postMessage(response)
   , receiveMessage = message => {
-      if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
+      if (
+        DelightRPC.isRequest(message) ||
+        DelightRPC.isBatchRequest(message) ||
+        DelightRPC.isAbort(message)
+      ) {
         return message
       }
     }
@@ -29,28 +33,53 @@ export function createServer<IAPI extends object>(
     receiveMessage?: (data: unknown) =>
     | IRequest<unknown>
     | IBatchRequest<unknown>
+    | IAbort
     | undefined
   } = {}
 ): () => void {
+  const idToController: Map<string, AbortController> = new Map()
+
   port.on('message', handler)
+  port.on('close', () => {
+    for (const controller of idToController.values()) {
+      controller.abort()
+    }
+
+    idToController.clear()
+  })
   return () => port.off('message', handler)
 
-  async function handler(message: unknown): Promise<void> {
-    const request = receiveMessage(message)
-    if (request) {
-      const result = await DelightRPC.createResponse(
-        api
-      , request
-      , {
-          parameterValidators
-        , version
-        , channel
-        , ownPropsOnly
+  async function handler(payload: unknown): Promise<void> {
+    const message = receiveMessage(payload)
+    if (message) {
+      if (DelightRPC.isAbort(message)) {
+        if (DelightRPC.matchChannel(message, channel)) {
+          idToController.get(message.id)?.abort()
+          idToController.delete(message.id)
         }
-      )
+      } else {
+        const controller = new AbortController()
+        idToController.set(message.id, controller)
 
-      if (isntNull(result)) {
-        postMessage(port, result)
+        try {
+          const result = await DelightRPC.createResponse(
+            api
+          , message
+          , {
+              parameterValidators
+            , version
+            , channel
+            , ownPropsOnly
+            , signal: controller.signal
+            }
+          )
+
+          if (isntNull(result)) {
+            postMessage(port, result)
+          }
+        } finally {
+          idToController.delete(message.id)
+        }
       }
     }
   }

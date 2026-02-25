@@ -73,18 +73,22 @@ function createClient<IAPI extends object>(
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: string
     channel?: string
+    timeout?: number
 
     postMessage?: (
       port: MessagePort | Worker
-    , request: IRequest<unknown>
+    , message: IRequest<unknown> | IAbort
     ) => void
-    = (port, request) => port.postMessage(request)
+    = (port, message) => port.postMessage(message)
 
     receiveMessage?: (message: unknown) =>
     | IResponse<unknown>
     | undefined
     = message => {
-      if (DelightRPC.isResult(message) || DelightRPC.isError(message)) {
+      if (
+        DelightRPC.isResult(message) ||
+        DelightRPC.isError(message)
+      ) {
         return message
       }
     }
@@ -99,19 +103,23 @@ function createBatchClient<DataType>(
 , options?: {
     expectedVersion?: string
     channel?: string
+    timeout?: number
 
     postMessage?: (
       port: MessagePort | Worker
-    , request: IBatchRequest<DataType>
+    , message: IBatchRequest<DataType> | IAbort
     ) => void
-    = (port, request) => port.postMessage(request)
+    = (port, message) => port.postMessage(message)
 
     receiveMessage?: (message: unknown) =>
     | IError
     | IBatchResponse<DataType>
     | undefined
     = message => {
-      if (DelightRPC.isError(message) || DelightRPC.isBatchResponse(message)) {
+      if (
+        DelightRPC.isError(message) ||
+        DelightRPC.isBatchResponse(message)
+      ) {
         return message
       }
     }
@@ -132,16 +140,21 @@ function createServer<IAPI extends object>(
 
     postMessage?: (
       port: MessagePort | Worker
-    , response: IResponse<unknown> | IBatchResponse<unknown>
+    , message: IResponse<unknown> | IBatchResponse<unknown> | IAbort
     ) => void
-    = (port, response) => port.postMessage(response)
+    = (port, message) => port.postMessage(message)
 
     receiveMessage?: (message: unknown) =>
     | IRequest<unknown>
     | IBatchRequest<unknown>
+    | IAbort
     | undefined
     = message => {
-      if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
+      if (
+        DelightRPC.isRequest(message) ||
+        DelightRPC.isBatchRequest(message) ||
+        DelightRPC.isAbort(message)
+      ) {
         return message
       }
     }

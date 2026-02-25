@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/delight-rpc/worker-threads/compare/v6.0.3...v7.0.0) (2026-02-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Added `IAbort` into the `message` parameter of `postMessage()` and `receiveMessage()`.
+
+### Features
+
+* add support for `DelightRPC.Abort` ([cec6caa](https://github.com/delight-rpc/worker-threads/commit/cec6caa5742b6ba1a526cbca87965db165cbd181))
+
 ### [6.0.3](https://github.com/delight-rpc/worker-threads/compare/v6.0.2...v6.0.3) (2026-02-12)
 
 

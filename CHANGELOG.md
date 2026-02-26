@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.1](https://github.com/delight-rpc/worker-threads/compare/v8.0.0...v8.0.1) (2026-02-26)
+
+
+### Bug Fixes
+
+* **client, server:** destructors ([3d40bc3](https://github.com/delight-rpc/worker-threads/commit/3d40bc38cf14a074689dc2b9e0e5351f8e48a7ac))
+
 ## [8.0.0](https://github.com/delight-rpc/worker-threads/compare/v7.0.0...v8.0.0) (2026-02-25)
 
 

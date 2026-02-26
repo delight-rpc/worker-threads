@@ -5,6 +5,7 @@ import { CustomError } from '@blackglory/errors'
 import { IRequest, IBatchRequest, IResponse, IError, IBatchResponse, IAbort } from '@delight-rpc/protocol'
 import { raceAbortSignals, timeoutSignal, withAbortSignal } from 'extra-abort'
 import { isntUndefined } from '@blackglory/prelude'
+import { SyncDestructor } from 'extra-defer'
 
 export function createClient<IAPI extends object>(
   port: MessagePort | Worker
@@ -36,14 +37,30 @@ export function createClient<IAPI extends object>(
     | undefined
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
-  const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
+  const destructor = new SyncDestructor()
 
-  port.on('message', handler)
+  const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
+  destructor.defer(abortAllPendings)
+
+  port.on('message', receive)
+  destructor.defer(() => port.off('message', receive))
+
+  if (port instanceof Worker) {
+    port.on('exit', close)
+    destructor.defer(() => port.off('exit', close))
+  } else {
+    port.on('close', close)
+    destructor.defer(() => port.off('close', close))
+  }
 
   const client = DelightRPC.createClient<IAPI>(
     async function send(request, signal) {
+      const destructor = new SyncDestructor()
+
       const res = new Deferred<IResponse<unknown>>()
       pendings.set(request.id, res)
+      destructor.defer(() => pendings.delete(request.id))
+
       try {
         postMessage(port, request)
 
@@ -51,14 +68,17 @@ export function createClient<IAPI extends object>(
           isntUndefined(timeout) && timeoutSignal(timeout)
         , signal
         ])
-        mergedSignal.addEventListener('abort', () => {
-          const abort = DelightRPC.createAbort(request.id, channel)
-          postMessage(port, abort)
-        })
+        mergedSignal.addEventListener('abort', sendAbort)
+        destructor.defer(() => mergedSignal.removeEventListener('abort', sendAbort))
 
         return await withAbortSignal(mergedSignal, () => res)
       } finally {
-        pendings.delete(request.id)
+        destructor.execute()
+      }
+
+      function sendAbort(): void {
+        const abort = DelightRPC.createAbort(request.id, channel)
+        postMessage(port, abort)
       }
     }
   , {
@@ -70,16 +90,21 @@ export function createClient<IAPI extends object>(
 
   return [client, close]
 
-  function close() {
-    port.off('message', handler)
-
-    for (const [key, deferred] of pendings.entries()) {
-      deferred.reject(new ClientClosed())
-      pendings.delete(key)
-    }
+  function close(): void {
+    destructor.execute()
   }
 
-  function handler(message: unknown): void {
+  function abortAllPendings(): void {
+    const err = new ClientClosed()
+
+    for (const deferred of pendings.values()) {
+      deferred.reject(err)
+    }
+
+    pendings.clear()
+  }
+
+  function receive(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
       pendings.get(response.id)?.resolve(response)
@@ -116,31 +141,47 @@ export function createBatchClient<DataType>(
     | undefined
   } = {}
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
-  const pendings: Map<string, Deferred<IError | IBatchResponse<DataType>>> = new Map()
+  const destructor = new SyncDestructor()
 
-  port.on('message', handler)
+  const pendings: Map<string, Deferred<IError | IBatchResponse<DataType>>> = new Map()
+  destructor.defer(abortAllPendings)
+
+  port.on('message', receive)
+  destructor.defer(() => port.off('message', receive))
+
+  if (port instanceof Worker) {
+    port.on('exit', close)
+    destructor.defer(() => port.off('exit', close))
+  } else {
+    port.on('close', close)
+    destructor.defer(() => port.off('close', close))
+  }
 
   const client = new DelightRPC.BatchClient<DataType>(
     async function send(request) {
-      const res = new Deferred<
-      | IError
-      | IBatchResponse<DataType>
-      >()
+      const destructor = new SyncDestructor()
+
+      const res = new Deferred<IError | IBatchResponse<DataType>>()
       pendings.set(request.id, res)
+      destructor.defer(() => pendings.delete(request.id))
+
       try {
         postMessage(port, request)
 
         const mergedSignal = raceAbortSignals([
           isntUndefined(timeout) && timeoutSignal(timeout)
         ])
-        mergedSignal.addEventListener('abort', () => {
-          const abort = DelightRPC.createAbort(request.id, channel)
-          postMessage(port, abort)
-        })
+        mergedSignal.addEventListener('abort', sendAbort)
+        destructor.defer(() => mergedSignal.removeEventListener('abort', sendAbort))
 
         return await withAbortSignal(mergedSignal, () => res)
       } finally {
-        pendings.delete(request.id)
+        destructor.execute()
+      }
+
+      function sendAbort(): void {
+        const abort = DelightRPC.createAbort(request.id, channel)
+        postMessage(port, abort)
       }
     }
   , {
@@ -152,15 +193,20 @@ export function createBatchClient<DataType>(
   return [client, close]
 
   function close() {
-    port.off('message', handler)
-
-    for (const [key, deferred] of pendings.entries()) {
-      deferred.reject(new ClientClosed())
-      pendings.delete(key)
-    }
+    destructor.execute()
   }
 
-  function handler(message: unknown): void {
+  function abortAllPendings(): void {
+    const err = new ClientClosed()
+
+    for (const deferred of pendings.values()) {
+      deferred.reject(err)
+    }
+
+    pendings.clear()
+  }
+
+  function receive(message: unknown): void {
     const response = receiveMessage(message)
     if (response) {
       pendings.get(response.id)?.resolve(response)
